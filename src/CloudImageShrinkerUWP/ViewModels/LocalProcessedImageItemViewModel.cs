@@ -5,12 +5,12 @@ using Windows.Storage.FileProperties;
 
 namespace CloudImageShrinkerUWP
 {
-    public class ProcessedImageItemViewModel
+    public class LocalProcessedImageItemViewModel
     {
         public StorageFile Original { get; }
         public StorageFile Compressed { get; }
 
-        public ProcessedImageItemViewModel(StorageFile original, StorageFile compressed)
+        public LocalProcessedImageItemViewModel(StorageFile original, StorageFile compressed)
         {
             Original = original;
             Compressed = compressed;
@@ -20,7 +20,6 @@ namespace CloudImageShrinkerUWP
         {
             OriginalProperties = await Original.GetBasicPropertiesAsync();
             CompressedProperties = await Compressed.GetBasicPropertiesAsync();
-
         }
 
         private BasicProperties CompressedProperties { get; set; }

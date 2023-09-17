@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Security.Authentication.Web.Core;
 using Windows.UI.ApplicationSettings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+using CloudImageShrinker;
 
 namespace CloudImageShrinkerUWP
 {
@@ -66,12 +57,14 @@ namespace CloudImageShrinkerUWP
             if (result.ResponseStatus == WebTokenRequestStatus.Success)
             {
                 string token = result.ResponseData[0].Token;
-                if (int.TryParse(WantedQualityElement.Text, out int wantedQuality))
-                {
-                    await new Shrinker(token, wantedQuality).ProcessAsync();
 
-                    await ViewModel.ProcessItemsAsync();
-                }
+                // await new Shrinker(token, wantedQuality).ProcessAsync();
+
+                var cloudService = new OnedriveService();
+                await cloudService.InitAsync(token);
+                ViewModel.CloudService = cloudService;
+
+                await ViewModel.LoadItemsFromCloudAsync(targetFolder: "Pellicule SkyDrive\\2022\\09");
             }
         }
 
@@ -80,25 +73,23 @@ namespace CloudImageShrinkerUWP
 
         private async void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedItem = e.AddedItems.FirstOrDefault() as ProcessedImageItemViewModel;
+            var selectedItem = e.AddedItems.FirstOrDefault() as ImageToProcessViewModel;
             ViewModel.SelectedItem = null;
             await Task.Yield();
             ViewModel.SelectedItem = selectedItem;
-            await FitImageInScrollViewer(selectedItem);
+            FitImageInScrollViewer(selectedItem);
         }
 
-        private async Task FitImageInScrollViewer(ProcessedImageItemViewModel selectedItem)
+        private void FitImageInScrollViewer(ImageToProcessViewModel selectedItem)
         {
             if (selectedItem == null)
             {
                 return;
             }
 
-            var infos = await selectedItem.Original.Properties.GetImagePropertiesAsync();
-
             // Obtenez la taille de l'image
-            double imageWidth = infos.Width;
-            double imageHeight = infos.Height;
+            double imageWidth = selectedItem.Data.Width;
+            double imageHeight = selectedItem.Data.Height;
 
             // Obtenez la taille du ScrollViewer
             double scrollViewerWidth = MainScrollViewer.ActualWidth;

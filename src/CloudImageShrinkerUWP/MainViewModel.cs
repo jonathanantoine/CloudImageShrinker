@@ -1,28 +1,36 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
-using Windows.Storage;
-using Windows.Storage.Search;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
+using CloudImageShrinker;
 
 namespace CloudImageShrinkerUWP
 {
     public class MainViewModel : BindableBase
     {
-        public ObservableCollection<ProcessedImageItemViewModel> Items
+        private ObservableCollection<ImageToProcessViewModel> _items;
+
+        public ObservableCollection<ImageToProcessViewModel> Items
         {
             get => _items;
             set => SetProperty(ref _items, value);
         }
 
-        public ProcessedImageItemViewModel SelectedItem
+        private ImageToProcessViewModel _selectedItem;
+
+        public ImageToProcessViewModel SelectedItem
         {
             get => _selectedItem;
-            set => SetProperty(ref _selectedItem, value);
+            set
+            {
+                SetProperty(ref _selectedItem, value);
+                value?.ProcessAsync(WantedQuality);
+            }
+        }
+
+        public int WantedQuality
+        {
+            get => _wantedQuality;
+            set => SetProperty(ref _wantedQuality, value);
         }
 
         public bool IsCompressedHidden
@@ -31,41 +39,25 @@ namespace CloudImageShrinkerUWP
             set => SetProperty(ref _isCompressedHidden, value);
         }
 
-        private StorageFolder _imagesFolder;
-        private ObservableCollection<ProcessedImageItemViewModel> _items;
-        private ProcessedImageItemViewModel _selectedItem;
+        public ICloudService CloudService { get; set; }
+
         private bool _isCompressedHidden;
+        private int _wantedQuality = 90;
 
         public MainViewModel() => InitAsync();
 
         private async Task InitAsync()
         {
-            _imagesFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync(Constants.WORKING_FOLDER);
-            ProcessItemsAsync();
-        }
-
-        public async Task ProcessItemsAsync()
-        {
-            var files = await _imagesFolder.GetFilesAsync();
-
-            var items = files
-                .GroupBy(item => ExtractFileStart(item.Name))
-                .Where(g => g.FirstOrDefault() != null && g.Skip(1).FirstOrDefault() != null)
-                .Select(gro => new ProcessedImageItemViewModel(
-                    gro.First(i => i.Name.LastIndexOf("." + Constants.COMPRESSED_EXTENSION, StringComparison.CurrentCultureIgnoreCase) < 0),
-                    gro.First(i => i.Name.LastIndexOf("." + Constants.COMPRESSED_EXTENSION, StringComparison.OrdinalIgnoreCase) >= 0)))
-                .ToArray();
-
-
-            foreach (var itemViewModel in items)
-            {
-                await itemViewModel.InitAsync();
-            }
-
-            Items = new ObservableCollection<ProcessedImageItemViewModel>(items);
         }
 
         private string ExtractFileStart(string itemName)
             => itemName.Replace("." + Constants.COMPRESSED_EXTENSION, string.Empty);
+
+        public async Task LoadItemsFromCloudAsync(string targetFolder)
+        {
+            var imagesToProcess = await CloudService.LoadImagesToProcessAsync(targetFolder);
+            var items = imagesToProcess.Select(im => new ImageToProcessViewModel(im));
+            Items = new ObservableCollection<ImageToProcessViewModel>(items);
+        }
     }
 }

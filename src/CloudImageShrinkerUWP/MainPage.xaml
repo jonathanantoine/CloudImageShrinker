@@ -13,67 +13,185 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition
+                Height="Auto">
+            </RowDefinition>
+            <RowDefinition
+                Height="Auto">
+            </RowDefinition>
+            <RowDefinition
+                Height="*">
+            </RowDefinition>
 
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel
+            Padding="4"
+            Orientation="Horizontal"
+            HorizontalAlignment="Left">
 
-            <Button Grid.Row="0" Click="Start" HorizontalAlignment="Center">Start !</Button>
-            <TextBox x:Name="WantedQualityElement" Text="90"></TextBox>
+
+
+            <TextBlock
+                Margin="0,0,2,0"
+
+                Text="Wanted quality : "
+                VerticalAlignment="Center" />
+            <TextBox
+                Text="{Binding WantedQuality,Converter={StaticResource IntToStringConverter},Mode=TwoWay }">
+            </TextBox>
+            
+            <Button
+                Margin="4,0,0,0"
+                Click="Start"
+                HorizontalAlignment="Center">
+                Start !
+            </Button>
         </StackPanel>
 
-        <ListView Height="100" Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="Single" SelectedIndex="0"
-                  HorizontalAlignment="Stretch"
-                  ScrollViewer.HorizontalScrollMode="Enabled"
-                  ScrollViewer.HorizontalScrollBarVisibility="Visible"
-                  SelectionChanged="OnSelectionChanged">
+        <ListView
+            Height="Auto"
+            Grid.Row="1"
+            ItemsSource="{Binding Items}"
+            SelectionMode="Single"
+            SelectedIndex="0"
+            HorizontalAlignment="Stretch"
+            ScrollViewer.HorizontalScrollMode="Enabled"
+            ScrollViewer.HorizontalScrollBarVisibility="Visible"
+            SelectionChanged="OnSelectionChanged">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Orientation="Horizontal" />
+                    <VirtualizingStackPanel
+                        Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:ProcessedImageItemViewModel">
-                    <Image HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="100" Source="{Binding Compressed.Path}" />
+                <DataTemplate
+                    x:DataType="local:ImageToProcessViewModel">
+                    <StackPanel
+                        Orientation="Vertical"
+                        HorizontalAlignment="Stretch">
+                        <Image
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Height="100"
+                            Source="{Binding Data.Thumbnail}" />
+                        <StackPanel
+                            Orientation="Vertical"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Bottom"
+                            Background="DimGray"
+                            Padding="4">
+                            <TextBlock
+                                Text="{Binding Data.Name}"
+                                Foreground="White"
+                                FontWeight="Normal"
+                                FontSize="12"
+                                TextWrapping="Wrap">
+                            </TextBlock>
+                            <TextBlock
+                                Text="{Binding Size}"
+                                Foreground="White"
+                                FontWeight="Light"
+                                FontSize="12">
+                            </TextBlock>
+
+                        </StackPanel>
+                    </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Grid Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid
+            Grid.Row="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
 
-            <ScrollViewer x:Name="MainScrollViewer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollMode="Enabled"
-                          VerticalScrollMode="Enabled"
-                          VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" ZoomMode="Enabled">
-                <Grid HorizontalAlignment="Center">
-                    <Image>
+            <ScrollViewer
+                x:Name="MainScrollViewer"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalScrollMode="Enabled"
+                VerticalScrollMode="Enabled"
+                VerticalScrollBarVisibility="Visible"
+                HorizontalScrollBarVisibility="Visible"
+                ZoomMode="Enabled">
+                <Grid
+                    HorizontalAlignment="Center">
+                    <Image
+                        Width="{Binding SelectedItem.Data.Width}"
+                        Height="{Binding SelectedItem.Data.Height}">
                         <Image.Source>
-                            <BitmapImage CreateOptions="IgnoreImageCache" UriSource="{Binding Path=SelectedItem.Original.Path}"></BitmapImage>
+                            <BitmapImage
+                                UriSource="{Binding Path=SelectedItem.Data.Thumbnail}">
+                            </BitmapImage>
+                        </Image.Source>
+                    </Image>
+                    <Image
+                        x:Name="Original">
+                        <Image.Source>
+                            <BitmapImage
+                                CreateOptions="IgnoreImageCache"
+                                UriSource="{Binding Path=SelectedItem.OriginalLocalPath}">
+                            </BitmapImage>
                         </Image.Source>
                     </Image>
 
-                    <Image PointerPressed="UIElement_OnPointerPressed"
-                           PointerReleased="UIElement_OnPointerReleased">
+                    <Image
+                        x:Name="Compressed"
+                        PointerPressed="UIElement_OnPointerPressed"
+                        PointerReleased="UIElement_OnPointerReleased">
                         <Image.Source>
-                            <BitmapImage CreateOptions="IgnoreImageCache" UriSource="{Binding Path=SelectedItem.Compressed.Path}"></BitmapImage>
+                            <BitmapImage
+                                CreateOptions="IgnoreImageCache"
+                                UriSource="{Binding Path=SelectedItem.CompressedlLocalPath}">
+                            </BitmapImage>
                         </Image.Source>
                     </Image>
                 </Grid>
             </ScrollViewer>
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Background="Gray" Padding="4" Orientation="Vertical">
+            <ProgressRing
+                Width="100"
+                Height="100"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                IsActive="{Binding SelectedItem.IsProcessing,TargetNullValue=false}">
+            </ProgressRing>
+            <StackPanel
+                Visibility="{Binding SelectedItem,Converter={StaticResource NotNullToVisibilityConverter}}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Gray"
+                Padding="4"
+                Orientation="Vertical">
                 <TextBlock>
-                    <Run Text="{Binding SelectedItem.Original.Name}" />
+                    <Run
+                        Text="{Binding SelectedItem.Data.Name}" />
                     <LineBreak />
-                    <Run Text="Original size : " /><Run Text="{Binding SelectedItem.OriginalSize}" />
+                    <Run
+                        Text="Original size : " />
+                    <Run
+                        Text="{Binding SelectedItem.Size}" />
                     <LineBreak />
-                    <Run Text="Compressed size : " /><Run Text="{Binding SelectedItem.CompressedSize}" />
+                    <Run
+                        Text="Compressed size : " />
+                    <Run
+                        Text="{Binding SelectedItem.CompressedSize}" />
                     <LineBreak />
-                    <Run Text="Delta : " /><Run Text="{Binding SelectedItem.Delta}" />
+                    <Run
+                        Text="Delta : " />
+                    <Run
+                        Text="{Binding SelectedItem.CompressionDelta}" />
 
                 </TextBlock>
             </StackPanel>
-            <TextBlock x:Name="Indicator" Text="SHOWING ORIGINAL" VerticalAlignment="Top" HorizontalAlignment="Right" Foreground="Red" FontSize="40"
-                       Opacity="0" FontWeight="Bold" />
+            <TextBlock
+                x:Name="Indicator"
+                Text="SHOWING ORIGINAL"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                Foreground="Red"
+                FontSize="40"
+                Opacity="0"
+                FontWeight="Bold" />
 
         </Grid>
     </Grid>

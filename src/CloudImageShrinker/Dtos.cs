@@ -24,7 +24,7 @@ namespace CloudImageShrinkerUWP
         public string webUrl { get; set; }
         public Reactions reactions { get; set; }
         public CreatedBy createdBy { get; set; }
-        public LastModifiedBy lastModifiedBy { get; set; }
+        // public LastModifiedBy lastModifiedBy { get; set; }
         public ParentReference parentReference { get; set; }
         public File file { get; set; }
         public FileSystemInfo fileSystemInfo { get; set; }
@@ -33,6 +33,8 @@ namespace CloudImageShrinkerUWP
         public Location location { get; set; }
         public PendingOperations pendingOperations { get; set; }
         public Video video { get; set; }
+        public Thumbnails[] thumbnails { get; set; }
+
     }
 
     public class Reactions
@@ -65,25 +67,32 @@ namespace CloudImageShrinkerUWP
         public string id { get; set; }
     }
 
-    public class LastModifiedBy
-    {
-        public Application1 application { get; set; }
-        public User1 user { get; set; }
-        public MobileMediaBackupKey1 mobileMediaBackupKey { get; set; }
-    }
+    // public class LastModifiedBy
+    // {
+    //     public Application application { get; set; }
+    //     public User user { get; set; }
+    //     public MobileMediaBackupKey1 mobileMediaBackupKey { get; set; }
+    // }
 
-    public class Application1
+
+    
+
+    public class Thumbnails
     {
-        public string displayName { get; set; }
         public string id { get; set; }
+        public Thumbnail large { get; set; }
+        public Thumbnail medium { get; set; }
+        public Thumbnail small { get; set; }
     }
 
-    public class User1
+    public class Thumbnail
     {
-        public string displayName { get; set; }
-        public string id { get; set; }
+        public int height { get; set; }
+        public string url { get; set; }
+        public int width { get; set; }
     }
 
+    
     public class MobileMediaBackupKey1
     {
         public string _odata_type { get; set; }
