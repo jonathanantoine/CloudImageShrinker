@@ -8,5 +8,7 @@
             x:Key="IntToStringConverter" />
         <converters:NotNullToVisibilityConverter
             x:Key="NotNullToVisibilityConverter" />
+        <converters:BooleanToVisibilityConverter
+            x:Key="BooleanToVisibilityConverter" />
     </Application.Resources>
 </Application>

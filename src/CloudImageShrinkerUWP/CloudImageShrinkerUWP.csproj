@@ -122,6 +122,7 @@
     </Compile>
     <Compile Include="BindableBase.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\IntToStringConverter.cs" />
     <Compile Include="Converters\NotNullToVisibilityConverter.cs" />
     <Compile Include="MainPage.xaml.cs">

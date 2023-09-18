@@ -36,7 +36,7 @@
                 Text="{Binding WantedQuality,Converter={StaticResource IntToStringConverter},Mode=TwoWay }" />
             <TextBlock
                 Margin="0,0,2,0"
-           Text="Target folder : "
+                Text="Target folder : "
                 VerticalAlignment="Center" />
             <TextBox
                 MinWidth="300"
@@ -148,13 +148,21 @@
                     </Image>
                 </Grid>
             </ScrollViewer>
-            <ProgressRing
-                Width="100"
-                Height="100"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                IsActive="{Binding SelectedItem.IsProcessing,TargetNullValue=false}">
-            </ProgressRing>
+            <StackPanel Visibility="{Binding SelectedItem.IsProcessing,Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Orientation="Vertical"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                <ProgressRing
+                    Width="100"
+                    Height="100"
+                    IsActive="{Binding SelectedItem.IsProcessing}"
+                    >
+                </ProgressRing>
+                <TextBlock
+                    Text="{Binding SelectedItem.StatusText}"
+                    Foreground="White"
+                    FontSize="40" />
+            </StackPanel>
             <StackPanel
                 Visibility="{Binding SelectedItem,Converter={StaticResource NotNullToVisibilityConverter}}"
                 HorizontalAlignment="Left"
