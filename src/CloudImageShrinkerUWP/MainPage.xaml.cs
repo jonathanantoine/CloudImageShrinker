@@ -64,7 +64,7 @@ namespace CloudImageShrinkerUWP
                 await cloudService.InitAsync(token);
                 ViewModel.CloudService = cloudService;
 
-                await ViewModel.LoadItemsFromCloudAsync(targetFolder: "Pellicule SkyDrive\\2022\\09");
+                await ViewModel.LoadItemsFromCloudAsync();
             }
         }
 

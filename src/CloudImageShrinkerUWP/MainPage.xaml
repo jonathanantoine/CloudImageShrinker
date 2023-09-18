@@ -28,24 +28,24 @@
             Padding="4"
             Orientation="Horizontal"
             HorizontalAlignment="Left">
-
-
-
             <TextBlock
                 Margin="0,0,2,0"
-
                 Text="Wanted quality : "
                 VerticalAlignment="Center" />
             <TextBox
-                Text="{Binding WantedQuality,Converter={StaticResource IntToStringConverter},Mode=TwoWay }">
-            </TextBox>
-            
+                Text="{Binding WantedQuality,Converter={StaticResource IntToStringConverter},Mode=TwoWay }" />
+            <TextBlock
+                Margin="0,0,2,0"
+           Text="Target folder : "
+                VerticalAlignment="Center" />
+            <TextBox
+                MinWidth="300"
+                Text="{Binding TargetFolder,Mode=TwoWay }" />
             <Button
                 Margin="4,0,0,0"
                 Click="Start"
-                HorizontalAlignment="Center">
-                Start !
-            </Button>
+                HorizontalAlignment="Center"
+                Content="Start !" />
         </StackPanel>
 
         <ListView

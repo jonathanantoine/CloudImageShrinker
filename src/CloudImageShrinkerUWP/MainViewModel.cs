@@ -15,6 +15,14 @@ namespace CloudImageShrinkerUWP
             set => SetProperty(ref _items, value);
         }
 
+        private string _targetFolder = "Pellicule SkyDrive\\2022\\09";
+
+        public string TargetFolder
+        {
+            get => _targetFolder;
+            set => SetProperty(ref _targetFolder, value);
+        }
+
         private ImageToProcessViewModel _selectedItem;
 
         public ImageToProcessViewModel SelectedItem
@@ -44,6 +52,7 @@ namespace CloudImageShrinkerUWP
         private bool _isCompressedHidden;
         private int _wantedQuality = 90;
 
+
         public MainViewModel() => InitAsync();
 
         private async Task InitAsync()
@@ -53,9 +62,9 @@ namespace CloudImageShrinkerUWP
         private string ExtractFileStart(string itemName)
             => itemName.Replace("." + Constants.COMPRESSED_EXTENSION, string.Empty);
 
-        public async Task LoadItemsFromCloudAsync(string targetFolder)
+        public async Task LoadItemsFromCloudAsync()
         {
-            var imagesToProcess = await CloudService.LoadImagesToProcessAsync(targetFolder);
+            var imagesToProcess = await CloudService.LoadImagesToProcessAsync(TargetFolder);
             var items = imagesToProcess.Select(im => new ImageToProcessViewModel(im));
             Items = new ObservableCollection<ImageToProcessViewModel>(items);
         }
