@@ -68,7 +68,17 @@ namespace CloudImageShrinkerUWP
             }
         }
 
-        private void Start(object sender, RoutedEventArgs e) => AccountsSettingsPane.Show();
+        private void Start(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.IsConnected)
+            {
+                 ViewModel.LoadItemsFromCloudAsync();
+            }
+            else
+            {
+                AccountsSettingsPane.Show();
+            }
+        }
 
 
         private async void OnSelectionChanged(object sender, SelectionChangedEventArgs e)

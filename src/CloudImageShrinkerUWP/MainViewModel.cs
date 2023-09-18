@@ -48,6 +48,7 @@ namespace CloudImageShrinkerUWP
         }
 
         public ICloudService CloudService { get; set; }
+        public bool IsConnected => CloudService != null;
 
         private bool _isCompressedHidden;
         private int _wantedQuality = 90;
