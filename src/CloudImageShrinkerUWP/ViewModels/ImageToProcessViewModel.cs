@@ -77,12 +77,13 @@ namespace CloudImageShrinkerUWP
                 StatusText = "Downloading";
                 using (var originalStream = await Data.GetStreamAsync())
                 {
-                    StatusText = "Creating local version";
 
                     using (var memStream = new MemoryStream())
                     {
                         await originalStream.CopyToAsync(memStream);
                         memStream.Seek(0, SeekOrigin.Begin);
+                        StatusText = "Creating local version";
+
                         OriginalLocalPath = await localStorageService.StoreLocallyAsync(Data.FullPath, Data.Name, memStream);
 
                         StatusText = "Compressing";

@@ -13,6 +13,22 @@ namespace CloudImageShrinkerUWP.Services
             var folderPath = Uri.EscapeDataString(Path.GetDirectoryName(fullPath));
             var storageFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(folderPath, CreationCollisionOption.OpenIfExists);
 
+            try
+            {
+                var existingFile = await storageFolder.GetFileAsync(fileName);
+                var basicProperties = await existingFile.GetBasicPropertiesAsync();
+                
+                // if the file is already here with the same size : no need to download it again.
+                if ((ulong) originalStream.Length == basicProperties.Size)
+                {
+                    return existingFile.Path;
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                // expected behavior
+            }
+
             var fileStorage = await storageFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             using (var fileStream = await fileStorage.OpenAsync(FileAccessMode.ReadWrite))
             {
