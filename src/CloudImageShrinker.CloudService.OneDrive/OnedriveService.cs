@@ -27,6 +27,10 @@ namespace CloudImageShrinker
                 new Uri($"https://graph.microsoft.com/v1.0/me/drive/root:/{targetFolder}:/children?$expand=thumbnails"));
             var content = await response.Content.ReadAsStringAsync();
             var folderContent = JsonConvert.DeserializeObject<RootObject>(content);
+            if (folderContent.value == null)
+            {
+                return new List<IImageToProcess>();
+            }
             List<IImageToProcess> images = folderContent.value
                 .Where(it => it.file.mimeType.Equals("image/jpeg"))
                 .OrderByDescending(i => i.size)
