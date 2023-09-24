@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -24,7 +25,7 @@ namespace CloudImageShrinker
         {
             // var targetFolder = "Pellicule SkyDrive\\2022\\09";
             var response = await _httpClient.GetAsync(
-                new Uri($"https://graph.microsoft.com/v1.0/me/drive/root:/{targetFolder}:/children?$expand=thumbnails"));
+                new Uri($"https://graph.microsoft.com/v1.0/me/drive/root:/{targetFolder}:/children?$expand=thumbnails&orderby=size desc&filter=contains(file/mimeType, 'image/jpeg')"));
             var content = await response.Content.ReadAsStringAsync();
             var folderContent = JsonConvert.DeserializeObject<RootObject>(content);
             if (folderContent.value == null)
