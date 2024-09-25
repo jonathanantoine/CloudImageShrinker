@@ -32,6 +32,8 @@ namespace CloudImageShrinkerUWP
             private set => SetProperty(ref _compressedSize, value);
         }
 
+        public int CompressedSizeBytes { get; private set; } = 0;
+
         public string OriginalLocalPath
         {
             get => _originalLocalPath;
@@ -49,8 +51,11 @@ namespace CloudImageShrinkerUWP
             get => _isProcessing;
             set
             {
-                SetProperty(ref _isProcessing, value);
-                RaisePropertyChanged(nameof(CanBeCompressed));
+                if (SetProperty(ref _isProcessing, value))
+                {
+                    RaisePropertyChanged(nameof(CanBeCompressed));
+                    RaisePropertyChanged(nameof(CanBeUploaded));
+                }
             }
         }
 
@@ -74,13 +79,26 @@ namespace CloudImageShrinkerUWP
 
         public bool CanBeCompressed
         {
-            get => _canBeCompressed && ! IsProcessing;
+            get => _canBeCompressed;
+            set
+            {
+                if (SetProperty(ref _canBeCompressed, value))
+                {
+                    RaisePropertyChanged(nameof(CanBeUploaded));
+                }
+
+            }
+        }
+        public bool CanBeUploaded
+        {
+            get => _canBeCompressed && !IsProcessing;
             set => SetProperty(ref _canBeCompressed, value);
         }
 
 
         public async Task ProcessAsync(int wantedQuality)
         {
+
             var localStorageService = ServiceLocator.Resolve<ILocalStorageService>();
             var imageProcessor = ServiceLocator.Resolve<IImageProcessor>();
 
@@ -104,8 +122,15 @@ namespace CloudImageShrinkerUWP
 
                         OriginalLocalPath = await localStorageService.StoreLocallyAsync(Data.FullPath, Data.Name, memStream);
 
+                        if (!CanBeCompressed)
+                        {
+                            IsProcessed = true;
+                            return;
+                        }
+
                         StatusText = "Compressing";
                         var compressedBytes = await imageProcessor.CompressImageAsync(memStream, wantedQuality);
+                        CompressedSizeBytes = compressedBytes.Length;
                         CompressedSize = SizeToMoString(compressedBytes.Length);
 
                         CompressionDelta = "-" + SizeToMoString(Data.Size - compressedBytes.Length);
