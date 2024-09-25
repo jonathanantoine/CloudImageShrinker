@@ -43,7 +43,8 @@ namespace CloudImageShrinkerUWP
         {
             ServiceLocator.RegisterSingleton<ILocalStorageService>(new UwpLocalStorageService());
             ServiceLocator.RegisterSingleton<IImageProcessor>(new UwpImageProcessor());
-            
+            ServiceLocator.RegisterSingleton<ICloudService>(new OnedriveService());
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,

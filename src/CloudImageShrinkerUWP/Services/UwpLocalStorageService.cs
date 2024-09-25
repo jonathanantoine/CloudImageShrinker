@@ -8,6 +8,11 @@ namespace CloudImageShrinkerUWP.Services
 {
     public class UwpLocalStorageService : ILocalStorageService
     {
+        public Task<Stream> OpenFileAsync(string compressedlLocalPath)
+        {
+            return Task.FromResult<Stream>( new FileStream(compressedlLocalPath,FileMode.Open));
+        }
+
         public async Task<string> StoreLocallyAsync(string fullPath, string fileName, Stream originalStream)
         {
             var folderPath = Uri.EscapeDataString(Path.GetDirectoryName(fullPath));

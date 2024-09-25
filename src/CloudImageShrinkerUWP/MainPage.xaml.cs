@@ -52,7 +52,7 @@ namespace CloudImageShrinkerUWP
 
         private async void GetMsaTokenAsync(WebAccountProviderCommand command)
         {
-            WebTokenRequest request = new WebTokenRequest(command.WebAccountProvider, "files.read");
+            WebTokenRequest request = new WebTokenRequest(command.WebAccountProvider, "files.ReadWrite");
             WebTokenRequestResult result = await WebAuthenticationCoreManager.RequestTokenAsync(request);
             if (result.ResponseStatus == WebTokenRequestStatus.Success)
             {
@@ -60,7 +60,7 @@ namespace CloudImageShrinkerUWP
 
                 // await new Shrinker(token, wantedQuality).ProcessAsync();
 
-                var cloudService = new OnedriveService();
+                var cloudService = ServiceLocator.Resolve<ICloudService>();
                 await cloudService.InitAsync(token);
                 ViewModel.CloudService = cloudService;
 
@@ -136,6 +136,11 @@ namespace CloudImageShrinkerUWP
             element.Opacity = 100;
             ViewModel.IsCompressedHidden = false;
             Indicator.Opacity = 0;
+        }
+
+        private void ReplaceByCompressedClicked(object sender, RoutedEventArgs e)
+        {
+            ViewModel.SelectedItem.ReplaceOriginalByCompressedAsync();
         }
     }
 }

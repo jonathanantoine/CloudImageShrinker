@@ -1,98 +1,80 @@
-﻿<Page
-    x:Class="CloudImageShrinkerUWP.MainPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:CloudImageShrinkerUWP"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+﻿<Page x:Class="CloudImageShrinkerUWP.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:CloudImageShrinkerUWP"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.DataContext>
         <local:MainViewModel></local:MainViewModel>
     </Page.DataContext>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition
-                Height="Auto">
+            <RowDefinition Height="Auto">
             </RowDefinition>
-            <RowDefinition
-                Height="Auto">
+            <RowDefinition Height="Auto">
             </RowDefinition>
-            <RowDefinition
-                Height="*">
+            <RowDefinition Height="*">
             </RowDefinition>
 
         </Grid.RowDefinitions>
-        <StackPanel
-            Padding="4"
-            Orientation="Horizontal"
-            HorizontalAlignment="Left">
-            <TextBlock
-                Margin="0,0,2,0"
-                Text="Wanted quality : "
-                VerticalAlignment="Center" />
-            <TextBox
-                Text="{Binding WantedQuality,Converter={StaticResource IntToStringConverter},Mode=TwoWay }" />
-            <TextBlock
-                Margin="0,0,2,0"
-                Text="Target folder : "
-                VerticalAlignment="Center" />
-            <TextBox
-                MinWidth="300"
-                Text="{Binding TargetFolder,Mode=TwoWay }" />
-            <Button
-                Margin="4,0,0,0"
-                Click="Start"
-                HorizontalAlignment="Center"
-                Content="Start !" />
+        <StackPanel Padding="4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Left">
+            <TextBlock Margin="0,0,2,0"
+                       Text="Wanted quality : "
+                       VerticalAlignment="Center" />
+            <TextBox Text="{Binding WantedQuality,Converter={StaticResource IntToStringConverter},Mode=TwoWay }" />
+            <TextBlock Margin="0,0,2,0"
+                       Text="Target folder : "
+                       VerticalAlignment="Center" />
+            <TextBox MinWidth="300"
+                     Text="{Binding TargetFolder,Mode=TwoWay }" />
+            <Button Margin="4,0,0,0"
+                    Click="Start"
+                    HorizontalAlignment="Center"
+                    Content="Start !" />
         </StackPanel>
 
-        <ListView
-            Height="Auto"
-            Grid.Row="1"
-            ItemsSource="{Binding Items}"
-            SelectionMode="Single"
-            SelectedIndex="0"
-            HorizontalAlignment="Stretch"
-            ScrollViewer.HorizontalScrollMode="Enabled"
-            ScrollViewer.HorizontalScrollBarVisibility="Visible"
-            SelectionChanged="OnSelectionChanged">
+        <ListView Height="Auto"
+                  Grid.Row="1"
+                  ItemsSource="{Binding Items}"
+                  SelectionMode="Single"
+                  SelectedIndex="0"
+                  HorizontalAlignment="Stretch"
+                  ScrollViewer.HorizontalScrollMode="Enabled"
+                  ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                  SelectionChanged="OnSelectionChanged">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <VirtualizingStackPanel
-                        Orientation="Horizontal" />
+                    <VirtualizingStackPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
-                <DataTemplate
-                    x:DataType="local:ImageToProcessViewModel">
-                    <StackPanel
-                        Orientation="Vertical"
-                        HorizontalAlignment="Stretch">
-                        <Image
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Height="100"
-                            Source="{Binding Data.Thumbnail}" />
-                        <StackPanel
-                            Orientation="Vertical"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Bottom"
-                            Background="DimGray"
-                            Padding="4">
-                            <TextBlock
-                                Text="{Binding Data.Name}"
-                                Foreground="White"
-                                FontWeight="Normal"
-                                FontSize="12"
-                                TextWrapping="Wrap">
+                <DataTemplate x:DataType="local:ImageToProcessViewModel">
+                    <StackPanel Orientation="Vertical"
+                                HorizontalAlignment="Stretch">
+                        <Image HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"
+                               Height="100"
+                               Source="{Binding Data.Thumbnail}" />
+                        <StackPanel Orientation="Vertical"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom"
+                                    Background="DimGray"
+                                    Padding="4">
+                            <TextBlock Text="{Binding Data.Name}"
+                                       Foreground="White"
+                                       FontWeight="Normal"
+                                       FontSize="12"
+                                       TextWrapping="Wrap">
                             </TextBlock>
-                            <TextBlock
-                                Text="{Binding Size}"
-                                Foreground="White"
-                                FontWeight="Light"
-                                FontSize="12">
+                            <TextBlock Text="{Binding Size}"
+                                       Foreground="White"
+                                       FontWeight="Light"
+                                       FontSize="12">
                             </TextBlock>
 
                         </StackPanel>
@@ -100,49 +82,40 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Grid
-            Grid.Row="2"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch">
+        <Grid Grid.Row="2"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
 
-            <ScrollViewer
-                x:Name="MainScrollViewer"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                HorizontalScrollMode="Enabled"
-                VerticalScrollMode="Enabled"
-                VerticalScrollBarVisibility="Visible"
-                HorizontalScrollBarVisibility="Visible"
-                ZoomMode="Enabled">
-                <Grid
-                    HorizontalAlignment="Center">
-                    <Image
-                        Width="{Binding SelectedItem.Data.Width}"
-                        Height="{Binding SelectedItem.Data.Height}">
+            <ScrollViewer x:Name="MainScrollViewer"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          HorizontalScrollMode="Enabled"
+                          VerticalScrollMode="Enabled"
+                          VerticalScrollBarVisibility="Visible"
+                          HorizontalScrollBarVisibility="Visible"
+                          ZoomMode="Enabled">
+                <Grid HorizontalAlignment="Center">
+                    <Image Width="{Binding SelectedItem.Data.Width}"
+                           Height="{Binding SelectedItem.Data.Height}">
                         <Image.Source>
-                            <BitmapImage
-                                UriSource="{Binding Path=SelectedItem.Data.Thumbnail}">
+                            <BitmapImage UriSource="{Binding Path=SelectedItem.Data.Thumbnail}">
                             </BitmapImage>
                         </Image.Source>
                     </Image>
-                    <Image
-                        x:Name="Original">
+                    <Image x:Name="Original">
                         <Image.Source>
-                            <BitmapImage
-                                CreateOptions="IgnoreImageCache"
-                                UriSource="{Binding Path=SelectedItem.OriginalLocalPath}">
+                            <BitmapImage CreateOptions="IgnoreImageCache"
+                                         UriSource="{Binding Path=SelectedItem.OriginalLocalPath}">
                             </BitmapImage>
                         </Image.Source>
                     </Image>
 
-                    <Image
-                        x:Name="Compressed"
-                        PointerPressed="UIElement_OnPointerPressed"
-                        PointerReleased="UIElement_OnPointerReleased">
+                    <Image x:Name="Compressed"
+                           PointerPressed="UIElement_OnPointerPressed"
+                           PointerReleased="UIElement_OnPointerReleased">
                         <Image.Source>
-                            <BitmapImage
-                                CreateOptions="IgnoreImageCache"
-                                UriSource="{Binding Path=SelectedItem.CompressedlLocalPath}">
+                            <BitmapImage CreateOptions="IgnoreImageCache"
+                                         UriSource="{Binding Path=SelectedItem.CompressedlLocalPath}">
                             </BitmapImage>
                         </Image.Source>
                     </Image>
@@ -152,54 +125,45 @@
                         Orientation="Vertical"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
-                <ProgressRing
-                    Width="100"
-                    Height="100"
-                    IsActive="{Binding SelectedItem.IsProcessing}"
-                    >
+                <ProgressRing Width="100"
+                              Height="100"
+                              IsActive="{Binding SelectedItem.IsProcessing}">
                 </ProgressRing>
-                <TextBlock
-                    Text="{Binding SelectedItem.StatusText}"
-                    Foreground="White"
-                    FontSize="40" />
+                <TextBlock Text="{Binding SelectedItem.StatusText}"
+                           Foreground="White"
+                           FontSize="40" />
             </StackPanel>
-            <StackPanel
-                Visibility="{Binding SelectedItem,Converter={StaticResource NotNullToVisibilityConverter}}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Background="Gray"
-                Padding="4"
-                Orientation="Vertical">
+            <StackPanel Visibility="{Binding SelectedItem,Converter={StaticResource NotNullToVisibilityConverter}}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Background="Gray"
+                        Padding="4"
+                        Orientation="Vertical">
                 <TextBlock>
-                    <Run
-                        Text="{Binding SelectedItem.Data.Name}" />
+                    <Run Text="{Binding SelectedItem.Data.Name}" />
                     <LineBreak />
-                    <Run
-                        Text="Original size : " />
-                    <Run
-                        Text="{Binding SelectedItem.Size}" />
+                    <Run Text="Original size : " />
+                    <Run Text="{Binding SelectedItem.Size}" />
                     <LineBreak />
-                    <Run
-                        Text="Compressed size : " />
-                    <Run
-                        Text="{Binding SelectedItem.CompressedSize}" />
+                    <Run Text="Compressed size : " />
+                    <Run Text="{Binding SelectedItem.CompressedSize}" />
                     <LineBreak />
-                    <Run
-                        Text="Delta : " />
-                    <Run
-                        Text="{Binding SelectedItem.CompressionDelta}" />
+                    <Run Text="Delta : " />
+                    <Run Text="{Binding SelectedItem.CompressionDelta}" />
 
                 </TextBlock>
+                <Button Content="Replace original by compressed version"
+                        IsEnabled="{Binding SelectedItem.CanBeCompressed}"
+                        Click="ReplaceByCompressedClicked" />
             </StackPanel>
-            <TextBlock
-                x:Name="Indicator"
-                Text="SHOWING ORIGINAL"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Right"
-                Foreground="Red"
-                FontSize="40"
-                Opacity="0"
-                FontWeight="Bold" />
+            <TextBlock x:Name="Indicator"
+                       Text="SHOWING ORIGINAL"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Right"
+                       Foreground="Red"
+                       FontSize="40"
+                       Opacity="0"
+                       FontWeight="Bold" />
 
         </Grid>
     </Grid>

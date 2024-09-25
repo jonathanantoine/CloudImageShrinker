@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using CloudImageShrinker;
 
@@ -10,14 +11,20 @@ namespace CloudImageShrinkerUWP
         private string _statusText;
         private bool _isProcessing;
         private bool _isProcessed;
+        private bool _canBeCompressed;
+
         private string _compressedlLocalPath;
         private string _compressedSize;
         private string _compressionDelta;
         public IImageToProcess Data { get; }
 
-        public ImageToProcessViewModel(IImageToProcess data) => Data = data;
+        public ImageToProcessViewModel(IImageToProcess data)
+        {
+            Data = data;
+            CanBeCompressed = data.Name.IndexOf(Constants.COMPRESSED_EXTENSION) < 0;
+        }
 
-        public string Size => ((float) Data.Size / (1024 * 1024)).ToString("F2") + "Mo";
+        public string Size => ((float)Data.Size / (1024 * 1024)).ToString("F2") + "Mo";
 
         public string CompressedSize
         {
@@ -40,7 +47,11 @@ namespace CloudImageShrinkerUWP
         public bool IsProcessing
         {
             get => _isProcessing;
-            set => SetProperty(ref _isProcessing, value);
+            set
+            {
+                SetProperty(ref _isProcessing, value);
+                RaisePropertyChanged(nameof(CanBeCompressed));
+            }
         }
 
         public bool IsProcessed
@@ -60,6 +71,13 @@ namespace CloudImageShrinkerUWP
             get => _compressionDelta;
             set => SetProperty(ref _compressionDelta, value);
         }
+
+        public bool CanBeCompressed
+        {
+            get => _canBeCompressed && ! IsProcessing;
+            set => SetProperty(ref _canBeCompressed, value);
+        }
+
 
         public async Task ProcessAsync(int wantedQuality)
         {
@@ -110,7 +128,35 @@ namespace CloudImageShrinkerUWP
 
         private static string SizeToMoString(int compressedBytesLength)
         {
-            return ((float) compressedBytesLength / (1024 * 1024)).ToString("F2") + "Mo";
+            return ((float)compressedBytesLength / (1024 * 1024)).ToString("F2") + "Mo";
+        }
+
+        internal async Task ReplaceOriginalByCompressedAsync()
+        {
+            if (string.IsNullOrEmpty(CompressedlLocalPath))
+            {
+                return;
+            }
+            try
+            {
+                IsProcessing = true;
+                StatusText = "Uploading";
+
+                var localStorageService = ServiceLocator.Resolve<ILocalStorageService>();
+                var cloudService = ServiceLocator.Resolve<ICloudService>();
+
+                using (var compressedStream = await localStorageService.OpenFileAsync(CompressedlLocalPath))
+                {
+                    var compressedFullPath = Path.ChangeExtension(Data.FullPath, Constants.COMPRESSED_EXTENSION + Path.GetExtension(Data.FullPath));
+
+                    await cloudService.ReplaceFileAsync(Data.FullPath, compressedFullPath, compressedStream);
+                    CanBeCompressed = false;
+                }
+            }
+            finally
+            {
+                IsProcessing = false;
+            }
         }
     }
 }

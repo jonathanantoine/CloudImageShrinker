@@ -41,5 +41,15 @@ namespace CloudImageShrinker
 
             return images;
         }
+
+        public async Task ReplaceFileAsync(string filePath, string compressedFullPath, Stream newContent)
+        {
+            HttpContent newHttpContent = new StreamContent(newContent);
+            var response = await _httpClient.PutAsync($"https://graph.microsoft.com/v1.0/me/drive/root:/{compressedFullPath}:/content", newHttpContent);
+            response.EnsureSuccessStatusCode();
+
+            response = await _httpClient.DeleteAsync($"https://graph.microsoft.com/v1.0/me/drive/root:/{filePath}");
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
