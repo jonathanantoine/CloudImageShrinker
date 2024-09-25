@@ -142,5 +142,10 @@ namespace CloudImageShrinkerUWP
         {
             ViewModel.SelectedItem.ReplaceOriginalByCompressedAsync();
         }
+
+        private void CompressAllFolder(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CompressAllFolderAsync();
+        }
     }
 }

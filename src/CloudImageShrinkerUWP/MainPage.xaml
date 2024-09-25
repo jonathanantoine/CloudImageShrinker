@@ -16,6 +16,8 @@
             </RowDefinition>
             <RowDefinition Height="Auto">
             </RowDefinition>
+            <RowDefinition Height="Auto">
+            </RowDefinition>
             <RowDefinition Height="*">
             </RowDefinition>
 
@@ -35,13 +37,26 @@
             <Button Margin="4,0,0,0"
                     Click="Start"
                     HorizontalAlignment="Center"
-                    Content="Start !" />
+                    Content="Fetch items in folder !" />
+
+            <Button Margin="4,0,0,0"
+                    Click="CompressAllFolder"
+                    HorizontalAlignment="Center"
+                    IsEnabled="{Binding CanCompressAllFolder}"
+                    Content="Compress all items in folder !" />
+
+
         </StackPanel>
 
+        <TextBlock           Grid.Row="1"
+                             Margin="0,0,2,0"
+                             Text="{Binding ProcessingState}"
+                             VerticalAlignment="Center" />
         <ListView Height="Auto"
-                  Grid.Row="1"
+                  Grid.Row="2"
                   ItemsSource="{Binding Items}"
                   SelectionMode="Single"
+                  IsEnabled="{Binding IsNotProcessing}"
                   SelectedIndex="0"
                   HorizontalAlignment="Stretch"
                   ScrollViewer.HorizontalScrollMode="Enabled"
@@ -82,11 +97,12 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Grid Grid.Row="2"
+        <Grid Grid.Row="3"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch">
 
             <ScrollViewer x:Name="MainScrollViewer"
+                          Visibility="{Binding IsNotProcessing,Converter={StaticResource BooleanToVisibilityConverter}}"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"
                           HorizontalScrollMode="Enabled"
@@ -94,7 +110,9 @@
                           VerticalScrollBarVisibility="Visible"
                           HorizontalScrollBarVisibility="Visible"
                           ZoomMode="Enabled">
-                <Grid HorizontalAlignment="Center">
+                <Grid HorizontalAlignment="Center"
+                      
+                      >
                     <Image Width="{Binding SelectedItem.Data.Width}"
                            Height="{Binding SelectedItem.Data.Height}">
                         <Image.Source>
@@ -130,6 +148,7 @@
                               IsActive="{Binding SelectedItem.IsProcessing}">
                 </ProgressRing>
                 <TextBlock Text="{Binding SelectedItem.StatusText}"
+                           Visibility="{Binding IsNotProcessing,Converter={StaticResource BooleanToVisibilityConverter}}"
                            Foreground="White"
                            FontSize="40" />
             </StackPanel>
@@ -153,7 +172,7 @@
 
                 </TextBlock>
                 <Button Content="Replace original by compressed version"
-                        IsEnabled="{Binding SelectedItem.CanBeCompressed}"
+                        IsEnabled="{Binding SelectedItem.CanBeUploaded}"
                         Click="ReplaceByCompressedClicked" />
             </StackPanel>
             <TextBlock x:Name="Indicator"
@@ -164,6 +183,19 @@
                        FontSize="40"
                        Opacity="0"
                        FontWeight="Bold" />
+
+            <StackPanel Visibility="{Binding IsProcessing,Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Orientation="Vertical"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                <ProgressRing Width="100"
+                              Height="100"
+                              IsActive="{Binding IsProcessing}">
+                </ProgressRing>
+                <TextBlock Text="{Binding ProcessingState}"
+                           Foreground="White"
+                           FontSize="40" />
+            </StackPanel>
 
         </Grid>
     </Grid>

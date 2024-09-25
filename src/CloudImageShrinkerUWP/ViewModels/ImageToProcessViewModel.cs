@@ -76,6 +76,7 @@ namespace CloudImageShrinkerUWP
             get => _compressionDelta;
             set => SetProperty(ref _compressionDelta, value);
         }
+        public int DeltaInBytes { get; private set; }
 
         public bool CanBeCompressed
         {
@@ -134,6 +135,7 @@ namespace CloudImageShrinkerUWP
                         CompressedSize = SizeToMoString(compressedBytes.Length);
 
                         CompressionDelta = "-" + SizeToMoString(Data.Size - compressedBytes.Length);
+                        DeltaInBytes = Data.Size - compressedBytes.Length;
                         using (var compressedStream = new MemoryStream(compressedBytes))
                         {
                             var compressedName = Path.ChangeExtension(Data.Name, Constants.COMPRESSED_EXTENSION + Path.GetExtension(Data.Name));
